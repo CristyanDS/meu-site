@@ -32,15 +32,24 @@
 
     <script>
         function verificarEVai() {
-            const email = document.getElementById('emailUsuario').value;
-            const senha = document.getElementById('senhaUsuario').value;
+    const email = document.getElementById('emailUsuario').value.trim();
+    const senha = document.getElementById('senhaUsuario').value;
 
-            if (email === "" || senha === "") {
-                alert("Por favor, preencha todos os campos para continuar.");
-            } else {
-                executarTrolagem();
-            }
-        }
+    if (email === "" || senha === "") {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    // Verifica se termina com @gmail.com
+    if (!email.toLowerCase().endsWith("@gmail.com")) {
+        alert("Digite um e-mail válido que termine com @gmail.com");
+        return;
+    }
+
+    // Se passou na validação
+    executarTrolagem();
+}
+        
 
         function executarTrolagem() {
             const corpo = document.getElementById('corpo');
@@ -68,3 +77,4 @@
 </body>
 
 </html>
+
