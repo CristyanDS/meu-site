@@ -69,11 +69,28 @@ function iniciarMatrix() {
 
 function falar(texto) {
     const msg = new SpeechSynthesisUtterance(texto);
+
+    const vozes = speechSynthesis.getVoices();
+
+    // tenta pegar uma voz feminina em português
+    const vozFeminina = vozes.find(voz => 
+        voz.lang.includes("pt") && 
+        (voz.name.toLowerCase().includes("female") || 
+         voz.name.toLowerCase().includes("google") ||
+         voz.name.toLowerCase().includes("maria"))
+    );
+
+    if (vozFeminina) {
+        msg.voice = vozFeminina;
+    }
+
     msg.lang = "pt-BR";
-    msg.pitch = 0.8; // deixa mais robótico
-    msg.rate = 0.9;
+    msg.pitch = 1.3; // mais agudo = mais feminino
+    msg.rate = 1;   // velocidade normal
+
     speechSynthesis.speak(msg);
 }
+    
 // comando para pular direto para a trolagem
 // window.onload = function() {
 //    executarTrolagem();
