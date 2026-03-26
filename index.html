@@ -70,7 +70,7 @@ function iniciarMatrix() {
 function falar(texto) {
     const msg = new SpeechSynthesisUtterance(texto);
     msg.lang = "pt-BR";
-    msg.pitch = 0.5; // deixa mais robótico
+    msg.pitch = 0.8; // deixa mais robótico
     msg.rate = 0.9;
     speechSynthesis.speak(msg);
 }
