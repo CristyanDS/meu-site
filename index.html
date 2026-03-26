@@ -3,80 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Seguro - Gmail</title>
+  <title>Login Seguro - Gmail</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="corpo">
+<canvas id="matrix"></canvas>
 
-    <div class="login-container" id="painel">
+   <div class="login-container" id="painel">
         <header>
             <h1 id="titulo">Entrar</h1>
             <p id="subtitulo">Use sua Conta do Google</p>
         </header>
 
-        <div class="form-grupo">
-            <input type="email" id="emailUsuario" placeholder="E-mail ou telefone">
-        </div>
+       <div class="form-grupo">
+    <input type="email" id="emailUsuario" placeholder="E-mail ou telefone">
+</div>
 
-        <div class="form-grupo">
-            <input type="password" id="senhaUsuario" placeholder="Digite sua senha">
-        </div>
+<div class="form-grupo">
+    <input type="password" id="senhaUsuario" placeholder="Digite sua senha">
+</div>
 
-        <div class="botoes">
-            <button type="button" onclick="verificarEVai()">Próxima</button>
-        </div>
-    </div>
+<div class="botoes">
+    <button type="button" onclick="verificarEVai()">Próxima</button>
+</div>
 
-    <!-- Áudio -->
-    <audio id="audioHacker" src="audio.mp3.mpeg" loop></audio>
+<script>
 
-    <script>
-        function verificarEVai() {
-    const email = document.getElementById('emailUsuario').value.trim();
-    const senha = document.getElementById('senhaUsuario').value;
+function iniciarMatrix() {
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
 
-    if (email === "" || senha === "") {
-        alert("Por favor, preencha todos os campos.");
-        return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const letras = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    const drops = [];
+    for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
     }
 
-    // Verifica se termina com @gmail.com
-    if (!email.toLowerCase().endsWith("@gmail.com")) {
-        alert("Digite um e-mail válido");
-        return;
-    }
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Se passou na validação
-    executarTrolagem();
-}
-        
+        ctx.fillStyle = "#00ff00";
+        ctx.font = fontSize + "px monospace";
 
-        function executarTrolagem() {
-            const corpo = document.getElementById('corpo');
-            const painel = document.getElementById('painel');
-            const titulo = document.getElementById('titulo');
-            const subtitulo = document.getElementById('subtitulo');
-            const audio = document.getElementById('audioHacker');
+        for (let i = 0; i < drops.length; i++) {
+            const text = letras.charAt(Math.floor(Math.random() * letras.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-            // Toca o áudio
-            audio.play();
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
 
-            document.querySelectorAll('.form-grupo').forEach(el => el.style.display = 'none');
-            document.querySelector('.botoes').style.display = 'none';
-
-            titulo.innerText = "⚠️ SISTEMA CORROMPIDO!";
-            subtitulo.innerText = "Extraindo arquivos confidenciais... 100%";
-            titulo.style.color = "white";
-            subtitulo.style.color = "#00ff00";
-
-            corpo.classList.add('fundo-hacker');
-            painel.classList.add('painel-alerta');
+            drops[i]++;
         }
-    </script>
+    }
 
+    setInterval(draw, 33);
+}
+
+function falar(texto) {
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.lang = "pt-BR";
+    msg.pitch = 0.5; // deixa mais robótico
+    msg.rate = 0.9;
+    speechSynthesis.speak(msg);
+}
+// comando para pular direto para a trolagem
+// window.onload = function() {
+//    executarTrolagem();
+
+function verificarEVai() {
+        // Captura os valores digitados
+        const email = document.getElementById('emailUsuario').value;
+        const senha = document.getElementById('senhaUsuario').value;
+
+        // VALIDAÇÃO: Verifica se os campos estão vazios
+        if (email === "" || senha === "") {
+            alert("Por favor, preencha todos os campos para continuar.");
+        } else {
+            // Se estiver tudo preenchido, executa a trolagem
+            executarTrolagem();
+        }
+    }
+
+function executarTrolagem() {
+    iniciarMatrix();
+    falar("Sistema comprometido. Extraindo dados.");
+    const corpo = document.getElementById('corpo');
+    const painel = document.getElementById('painel');
+    const titulo = document.getElementById('titulo');
+    const subtitulo = document.getElementById('subtitulo');
+
+    // Esconde login
+    document.querySelectorAll('.form-grupo').forEach(el => el.style.display = 'none');
+    document.querySelector('.botoes').style.display = 'none';
+
+    // Ativa estilo hacker
+    corpo.classList.add('fundo-hacker');
+    painel.classList.add('painel-alerta');
+
+    titulo.innerText = "⚠️ DADOS COMPROMETIDOS";
+    titulo.style.color = "white";
+
+    subtitulo.innerText = "";
+    subtitulo.style.color = "#00ff00";
+
+    // Cria área de "terminal"
+    const terminal = document.createElement("div");
+    terminal.style.marginTop = "20px";
+    terminal.style.textAlign = "left";
+    terminal.style.fontFamily = "monospace";
+    terminal.style.color = "#00ff00";
+    painel.appendChild(terminal);
+
+    // Barra de progresso
+    const barra = document.createElement("div");
+    barra.style.width = "100%";
+    barra.style.height = "10px";
+    barra.style.background = "#222";
+    barra.style.marginTop = "20px";
+
+    const progresso = document.createElement("div");
+    progresso.style.height = "100%";
+    progresso.style.width = "0%";
+    progresso.style.background = "#00ff00";
+
+    barra.appendChild(progresso);
+    painel.appendChild(barra);
+
+    // Linhas fake
+    const linhas = [
+        "Conectando ao servidor...",
+        "Acesso autorizado ✔",
+        "Injetando payload...",
+        "Quebrando criptografia...",
+        "Extraindo dados do sistema...",
+        "Copiando arquivos confidenciais...",
+        "Enviando para servidor externo...",
+        "Limpando rastros..."
+    ];
+
+    let i = 0;
+
+    function digitarLinha(texto, callback) {
+        let j = 0;
+        const linha = document.createElement("div");
+        terminal.appendChild(linha);
+
+        const intervalo = setInterval(() => {
+            linha.innerText += texto[j];
+            j++;
+
+            // som de digitação
+            tocarBeep();
+
+            if (j >= texto.length) {
+                clearInterval(intervalo);
+                setTimeout(callback, 300);
+            }
+        }, 30);
+    }
+
+    function proximaLinha() {
+        if (i < linhas.length) {
+            digitarLinha(linhas[i], () => {
+                i++;
+                atualizarProgresso();
+                proximaLinha();
+            });
+        } else {
+            titulo.innerText = "💀 DADOS COMPROMETIDOS";
+            falar("Todos os dados foram extraídos.");
+        }
+    }
+
+    function atualizarProgresso() {
+        let valor = (i / linhas.length) * 100;
+        progresso.style.width = valor + "%";
+    }
+
+    // SOM (beep simples)
+    function tocarBeep() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        osc.type = "square";
+        osc.frequency.value = 800;
+        osc.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => osc.stop(), 20);
+    }
+
+    proximaLinha();
+}
+</script>
 </body>
-
 </html>
-
 
 
